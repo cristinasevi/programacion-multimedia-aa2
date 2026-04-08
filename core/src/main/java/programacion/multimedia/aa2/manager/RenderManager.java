@@ -3,6 +3,7 @@ package programacion.multimedia.aa2.manager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
 import programacion.multimedia.aa2.domain.Burbuja;
@@ -41,6 +42,7 @@ public class RenderManager implements Disposable {
         this.logicManager = logicManager;
         batch = new SpriteBatch();
         fuente = new BitmapFont();
+        fuente.getData().setScale(1.5f);
         fuente.setColor(Color.WHITE);
         scrollX = 0;
 
@@ -77,7 +79,6 @@ public class RenderManager implements Disposable {
                 batch.draw(e.getFrameActual(), e.getX(), e.getY(), SUBMARINO_W, SUBMARINO_H);
             } else if (e instanceof PezGloboEnemy) {
                 batch.draw(e.getFrameActual(), e.getX(), e.getY(), PEZGLOBO_W, PEZGLOBO_H);
-                // Dibujar tinta del pez globo
                 for (Burbuja b : ((PezGloboEnemy) e).getTinta()) {
                     batch.draw(b.getTextura(), b.getLimites().x, b.getLimites().y, BURBUJA_W, BURBUJA_H);
                 }
@@ -101,12 +102,14 @@ public class RenderManager implements Disposable {
     }
 
     private void dibujarHUD() {
-        fuente.draw(batch, "PUNTOS: " + logicManager.jugador.getPuntuacion(), 10, SCREEN_HEIGHT - 10);
-        fuente.draw(batch, "VIDAS: " + logicManager.jugador.getVidas(), 10, SCREEN_HEIGHT - 30);
-        fuente.draw(batch, "NIVEL: " + logicManager.getNivelActual(), 10, SCREEN_HEIGHT - 50);
+        // HUD fijo en la parte de abajo de la pantalla
+        fuente.draw(batch, "PUNTOS: " + logicManager.jugador.getPuntuacion(), 10, 50);
+        fuente.draw(batch, "VIDAS: " + logicManager.jugador.getVidas(), 200, 50);
+        fuente.draw(batch, "NIVEL: " + logicManager.getNivelActual(), 380, 50);
 
+        // Escudo activo centrado arriba
         if (logicManager.jugador.tieneEscudo()) {
-            fuente.draw(batch, "ESCUDO ACTIVO", SCREEN_WIDTH / 2f - 50, SCREEN_HEIGHT - 10);
+            fuente.draw(batch, "*** ESCUDO ACTIVO ***", SCREEN_WIDTH / 2f - 90, SCREEN_HEIGHT - 10);
         }
     }
 
