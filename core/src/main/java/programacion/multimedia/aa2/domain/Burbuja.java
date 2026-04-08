@@ -36,4 +36,5 @@ public class Burbuja {
     }
 
     public Rectangle getLimites() { return limites; }
+    public TextureRegion getTextura() { return textura; }
 }
