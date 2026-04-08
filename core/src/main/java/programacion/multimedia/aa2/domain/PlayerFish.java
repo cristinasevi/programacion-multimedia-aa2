@@ -25,16 +25,17 @@ public class PlayerFish extends Character {
     private float timerEscudo;
     private float timerVelocidad;
     private float timerDobleDisparo;
+    private float timerGolpe;
     private boolean miraDerecha;
-    private boolean golpeado;
 
     private List<Burbuja> balas;
 
     public PlayerFish() {
-        super(100, SCREEN_HEIGHT / 2f, 37, 25);
+        super(100, SCREEN_HEIGHT / 2f, 60, 40);
         vidas = PLAYER_LIVES;
         puntuacion = 0;
         miraDerecha = true;
+        timerGolpe = 0;
         balas = new ArrayList<>();
 
         animNadar = crearAnimacion(PLAYER_SWIM);
@@ -62,7 +63,13 @@ public class PlayerFish extends Character {
         if (timerVelocidad > 0) timerVelocidad -= dt;
         if (timerDobleDisparo > 0) timerDobleDisparo -= dt;
 
-        manejarInput(dt);
+        // Si está en animación de golpe, esperar a que termine
+        if (timerGolpe > 0) {
+            timerGolpe -= dt;
+            frameActual = animGolpe.getKeyFrame(tiempoEstado, true);
+        } else {
+            manejarInput(dt);
+        }
 
         // Actualizar balas
         for (int i = balas.size() - 1; i >= 0; i--) {
@@ -110,16 +117,21 @@ public class PlayerFish extends Character {
     }
 
     public void recibirGolpe() {
-        if (timerEscudo <= 0) vidas--;
+        if (timerEscudo <= 0) {
+            vidas--;
+            timerGolpe = 0.6f;
+        }
     }
 
     public void activarEscudo(float duracion)       { timerEscudo = duracion; }
     public void activarVelocidad(float duracion)    { timerVelocidad = duracion; }
     public void activarDobleDisparo(float duracion) { timerDobleDisparo = duracion; }
 
-    public boolean tieneEscudo()    { return timerEscudo > 0; }
-    public float getTimerEscudo()   { return timerEscudo; }
-    public int getPuntuacion()      { return puntuacion; }
-    public void sumarPuntos(int p)  { puntuacion += p; }
-    public List<Burbuja> getBalas() { return balas; }
+    public boolean tieneEscudo()        { return timerEscudo > 0; }
+    public float getTimerEscudo()       { return timerEscudo; }
+    public float getTimerVelocidad()    { return timerVelocidad; }
+    public float getTimerDobleDisparo() { return timerDobleDisparo; }
+    public int getPuntuacion()          { return puntuacion; }
+    public void sumarPuntos(int p)      { puntuacion += p; }
+    public List<Burbuja> getBalas()     { return balas; }
 }

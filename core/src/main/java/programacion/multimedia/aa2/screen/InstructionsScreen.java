@@ -39,7 +39,7 @@ public class InstructionsScreen implements Screen {
         tabla.row();
         tabla.add(new VisLabel("ESC → Pausar el juego")).center().pad(5);
         tabla.row();
-        tabla.add(new VisLabel("")).pad(10);
+        tabla.add(new VisLabel("")).pad(5);
         tabla.row();
         tabla.add(new VisLabel("ENEMIGOS")).center().pad(5);
         tabla.row();
@@ -49,7 +49,7 @@ public class InstructionsScreen implements Screen {
         tabla.row();
         tabla.add(new VisLabel("Pez globo → Dispara tinta (10 pts)")).center().pad(3);
         tabla.row();
-        tabla.add(new VisLabel("")).pad(10);
+        tabla.add(new VisLabel("")).pad(5);
         tabla.row();
         tabla.add(new VisLabel("POWERUPS")).center().pad(5);
         tabla.row();
@@ -60,7 +60,15 @@ public class InstructionsScreen implements Screen {
         tabla.add(new VisLabel("Concha → Disparo doble 5s")).center().pad(3);
         tabla.row();
 
-        VisTextButton btnVolver = new VisTextButton("Volver");
+        VisTextButton btnJugar = new VisTextButton("¡Jugar!");
+        btnJugar.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                juego.setScreen(new GameScreen(juego));
+            }
+        });
+
+        VisTextButton btnVolver = new VisTextButton("Volver al menú");
         btnVolver.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -68,7 +76,9 @@ public class InstructionsScreen implements Screen {
             }
         });
 
-        tabla.add(btnVolver).center().width(300).height(80).pad(15);
+        tabla.add(btnJugar).center().width(300).height(70).pad(8);
+        tabla.row();
+        tabla.add(btnVolver).center().width(300).height(70).pad(8);
 
         Gdx.input.setInputProcessor(stage);
     }

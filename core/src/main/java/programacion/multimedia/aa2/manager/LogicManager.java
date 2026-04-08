@@ -1,7 +1,5 @@
 package programacion.multimedia.aa2.manager;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.utils.Disposable;
 import programacion.multimedia.aa2.domain.*;
@@ -26,6 +24,9 @@ public class LogicManager implements Disposable {
     private int nivelActual;
     private boolean partidaTerminada;
 
+    private float modificadorDificultad;
+    private float tasaSpawnBase;
+
     public LogicManager() {
         enemigos = new ArrayList<>();
         powerups = new ArrayList<>();
@@ -34,6 +35,23 @@ public class LogicManager implements Disposable {
         timerEnemigo = 0;
         timerPowerup = 0;
         partidaTerminada = false;
+
+        // Leer dificultad guardada y aplicarla
+        int dificultad = ConfigurationManager.getDifficulty();
+        switch (dificultad) {
+            case 1:  // Fácil
+                modificadorDificultad = 0.7f;
+                tasaSpawnBase = ENEMY_SPAWN_RATE * 1.5f;
+                break;
+            case 3:  // Difícil
+                modificadorDificultad = 1.4f;
+                tasaSpawnBase = ENEMY_SPAWN_RATE * 0.7f;
+                break;
+            default: // Medio
+                modificadorDificultad = 1.0f;
+                tasaSpawnBase = ENEMY_SPAWN_RATE;
+                break;
+        }
     }
 
     public void cargar() {
@@ -51,7 +69,6 @@ public class LogicManager implements Disposable {
 
         jugador.actualizar(dt);
 
-        // Comprobar si pasamos al nivel 2
         if (nivelActual == 1 && jugador.getPuntuacion() >= LEVEL_2_SCORE) {
             nivelActual = 2;
         }
@@ -70,7 +87,8 @@ public class LogicManager implements Disposable {
 
     private void spawnearEnemigos(float dt) {
         timerEnemigo += dt;
-        float tasaSpawn = nivelActual == 2 ? ENEMY_SPAWN_RATE * 0.6f : ENEMY_SPAWN_RATE;
+        // En nivel 2 spawn más rápido, modificado por dificultad
+        float tasaSpawn = nivelActual == 2 ? tasaSpawnBase * 0.6f : tasaSpawnBase;
 
         if (timerEnemigo >= tasaSpawn) {
             timerEnemigo = 0;
@@ -79,13 +97,13 @@ public class LogicManager implements Disposable {
 
             switch (tipo) {
                 case 0:
-                    enemigos.add(new SubmarinoEnemy(SCREEN_WIDTH + 50, y));
+                    enemigos.add(new SubmarinoEnemy(SCREEN_WIDTH + 50, y, modificadorDificultad));
                     break;
                 case 1:
-                    enemigos.add(new TiburonEnemy(SCREEN_WIDTH + 50, y, jugador));
+                    enemigos.add(new TiburonEnemy(SCREEN_WIDTH + 50, y, jugador, modificadorDificultad));
                     break;
                 case 2:
-                    enemigos.add(new PezGloboEnemy(SCREEN_WIDTH + 50, y));
+                    enemigos.add(new PezGloboEnemy(SCREEN_WIDTH + 50, y, modificadorDificultad));
                     break;
             }
         }
@@ -149,6 +167,7 @@ public class LogicManager implements Disposable {
                 enemigos.remove(i);
                 if (ConfigurationManager.isSoundEnabled())
                     ResourceManager.getSound(SOUND_HIT).play();
+                continue;
             }
 
             // Tinta del pez globo vs jugador
@@ -171,7 +190,7 @@ public class LogicManager implements Disposable {
                 powerups.get(i).aplicar(jugador);
                 powerups.remove(i);
                 if (ConfigurationManager.isSoundEnabled())
-                    ResourceManager.getSound(SOUND_HIT).play();
+                    ResourceManager.getSound(SOUND_POWERUP).play();
             }
         }
     }
