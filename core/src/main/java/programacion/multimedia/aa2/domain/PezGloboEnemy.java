@@ -13,8 +13,8 @@ public class PezGloboEnemy extends Enemy {
     private float timerDisparo;
     private List<Burbuja> tinta;
 
-    public PezGloboEnemy(float x, float y) {
-        super(x, y, 100, 100, PEZ_GLOBO_SPEED, PEZ_GLOBO_VALUE);
+    public PezGloboEnemy(float x, float y, float modificador) {
+        super(x, y, 100, 100, PEZ_GLOBO_SPEED * modificador, PEZ_GLOBO_VALUE);
         timerDisparo = 0;
         tinta = new ArrayList<>();
         frameActual = ResourceManager.getRegion(PEZ_GLOBO);

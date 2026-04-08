@@ -10,8 +10,8 @@ public class SubmarinoEnemy extends Enemy {
     private float tiempo;
     private float yOrigen;
 
-    public SubmarinoEnemy(float x, float y) {
-        super(x, y, 100, 50, SUBMARINO_SPEED, SUBMARINO_VALUE);
+    public SubmarinoEnemy(float x, float y, float modificador) {
+        super(x, y, 100, 50, SUBMARINO_SPEED * modificador, SUBMARINO_VALUE);
         yOrigen = y;
         tiempo = 0;
         frameActual = ResourceManager.getRegion(SUBMARINO);

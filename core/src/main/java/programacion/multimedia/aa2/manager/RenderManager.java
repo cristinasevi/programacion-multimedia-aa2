@@ -3,8 +3,8 @@ package programacion.multimedia.aa2.manager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Disposable;
 import programacion.multimedia.aa2.domain.Burbuja;
 import programacion.multimedia.aa2.domain.Enemy;
@@ -19,30 +19,32 @@ public class RenderManager implements Disposable {
 
     private SpriteBatch batch;
     private BitmapFont fuente;
+    private ShapeRenderer shapeRenderer;
     private LogicManager logicManager;
     private Texture fondoNivel1;
     private Texture fondoNivel2;
     private float scrollX;
 
-    // Tamaños de sprites en pantalla
-    private static final float TIBURON_W   = 130f;
-    private static final float TIBURON_H   = 75f;
+    private static final float HUD_H = 28f;
+    private static final float TIBURON_W = 130f;
+    private static final float TIBURON_H = 75f;
     private static final float SUBMARINO_W = 100f;
     private static final float SUBMARINO_H = 50f;
-    private static final float PEZGLOBO_W  = 80f;
-    private static final float PEZGLOBO_H  = 80f;
-    private static final float BURBUJA_W   = 20f;
-    private static final float BURBUJA_H   = 20f;
-    private static final float POWERUP_W   = 50f;
-    private static final float POWERUP_H   = 50f;
-    private static final float PLAYER_W    = 60f;
-    private static final float PLAYER_H    = 40f;
+    private static final float PEZGLOBO_W = 80f;
+    private static final float PEZGLOBO_H = 80f;
+    private static final float BURBUJA_W = 20f;
+    private static final float BURBUJA_H = 20f;
+    private static final float POWERUP_W = 50f;
+    private static final float POWERUP_H = 50f;
+    private static final float PLAYER_W = 60f;
+    private static final float PLAYER_H = 40f;
 
     public RenderManager(LogicManager logicManager) {
         this.logicManager = logicManager;
         batch = new SpriteBatch();
+        shapeRenderer = new ShapeRenderer();
         fuente = new BitmapFont();
-        fuente.getData().setScale(1.5f);
+        fuente.getData().setScale(1f);
         fuente.setColor(Color.WHITE);
         scrollX = 0;
 
@@ -51,26 +53,63 @@ public class RenderManager implements Disposable {
     }
 
     public void dibujar(float delta) {
-        batch.begin();
+        dibujarBarraHUD();
 
+        batch.begin();
         dibujarFondo(delta);
         dibujarEnemigos();
         dibujarPowerups();
         dibujarJugador();
-        dibujarHUD();
-
+        dibujarTextoHUD();
         batch.end();
     }
 
+    // Fondo con scroll
     private void dibujarFondo(float delta) {
         scrollX -= 80 * delta;
         if (scrollX <= -SCREEN_WIDTH) scrollX = 0;
 
         Texture fondo = logicManager.getNivelActual() == 1 ? fondoNivel1 : fondoNivel2;
-        batch.draw(fondo, scrollX, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-        batch.draw(fondo, scrollX + SCREEN_WIDTH, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        // El área de juego empieza en y=HUD_H para dejar espacio a la barra
+        batch.draw(fondo, scrollX, HUD_H, SCREEN_WIDTH, SCREEN_HEIGHT - HUD_H);
+        batch.draw(fondo, scrollX + SCREEN_WIDTH, HUD_H, SCREEN_WIDTH, SCREEN_HEIGHT - HUD_H);
     }
 
+    // Barra HUD
+    private void dibujarBarraHUD() {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(0.05f, 0.1f, 0.35f, 1f);
+        shapeRenderer.rect(0, 0, SCREEN_WIDTH, HUD_H);
+        shapeRenderer.end();
+    }
+
+    // Texto del HUD
+    private void dibujarTextoHUD() {
+        float y = HUD_H - 6f;
+
+        fuente.draw(batch, "PUNTOS: " + logicManager.jugador.getPuntuacion(), 8, y);
+        fuente.draw(batch, "VIDAS: " + logicManager.jugador.getVidas(), 170, y);
+        fuente.draw(batch, "NIVEL: " + logicManager.getNivelActual(), 290, y);
+
+        // Powerup activo
+        String powerupActivo = getPowerupActivo();
+        if (!powerupActivo.isEmpty()) {
+            fuente.draw(batch, powerupActivo, 400, y);
+        }
+    }
+
+    private String getPowerupActivo() {
+        float escudo = logicManager.jugador.getTimerEscudo();
+        float vel    = logicManager.jugador.getTimerVelocidad();
+        float doble  = logicManager.jugador.getTimerDobleDisparo();
+
+        if (escudo > 0)  return "ESCUDO " + (int) escudo + "s";
+        if (vel > 0)     return "VELOCIDAD " + (int) vel + "s";
+        if (doble > 0)   return "DOBLE DISPARO " + (int) doble + "s";
+        return "";
+    }
+
+    // Enemigos, powerups y jugador
     private void dibujarEnemigos() {
         for (Enemy e : logicManager.enemigos) {
             if (e instanceof TiburonEnemy) {
@@ -95,21 +134,8 @@ public class RenderManager implements Disposable {
     private void dibujarJugador() {
         batch.draw(logicManager.jugador.getFrameActual(),
             logicManager.jugador.getX(), logicManager.jugador.getY(), PLAYER_W, PLAYER_H);
-
         for (Burbuja bala : logicManager.jugador.getBalas()) {
             batch.draw(bala.getTextura(), bala.getLimites().x, bala.getLimites().y, BURBUJA_W, BURBUJA_H);
-        }
-    }
-
-    private void dibujarHUD() {
-        // HUD fijo en la parte de abajo de la pantalla
-        fuente.draw(batch, "PUNTOS: " + logicManager.jugador.getPuntuacion(), 10, 50);
-        fuente.draw(batch, "VIDAS: " + logicManager.jugador.getVidas(), 200, 50);
-        fuente.draw(batch, "NIVEL: " + logicManager.getNivelActual(), 380, 50);
-
-        // Escudo activo centrado arriba
-        if (logicManager.jugador.tieneEscudo()) {
-            fuente.draw(batch, "*** ESCUDO ACTIVO ***", SCREEN_WIDTH / 2f - 90, SCREEN_HEIGHT - 10);
         }
     }
 
@@ -117,5 +143,6 @@ public class RenderManager implements Disposable {
     public void dispose() {
         batch.dispose();
         fuente.dispose();
+        shapeRenderer.dispose();
     }
 }
