@@ -1,11 +1,23 @@
 package programacion.multimedia.aa2;
 
 import com.badlogic.gdx.Game;
+import programacion.multimedia.aa2.manager.ResourceManager;
+import programacion.multimedia.aa2.screen.MainMenuScreen;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class JuegoPeces extends Game {
+
     @Override
     public void create() {
-        setScreen(new FirstScreen());
+        ResourceManager.loadAllResources();
+        while (!ResourceManager.update()) {
+            // Esperar a que carguen los recursos
+        }
+        setScreen(new MainMenuScreen(this));
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        ResourceManager.dispose();
     }
 }
