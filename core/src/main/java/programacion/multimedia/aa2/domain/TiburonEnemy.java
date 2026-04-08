@@ -8,8 +8,8 @@ public class TiburonEnemy extends Enemy {
 
     private PlayerFish jugador;
 
-    public TiburonEnemy(float x, float y, PlayerFish jugador) {
-        super(x, y, 130, 75, TIBURON_SPEED, TIBURON_VALUE);
+    public TiburonEnemy(float x, float y, PlayerFish jugador, float modificador) {
+        super(x, y, 130, 75, TIBURON_SPEED * modificador, TIBURON_VALUE);
         this.jugador = jugador;
         frameActual = ResourceManager.getRegion(TIBURON);
     }
