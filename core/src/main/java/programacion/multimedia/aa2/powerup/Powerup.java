@@ -33,4 +33,5 @@ public abstract class Powerup {
     }
 
     public Rectangle getLimites() { return limites; }
+    public TextureRegion getTextura() { return textura; }
 }

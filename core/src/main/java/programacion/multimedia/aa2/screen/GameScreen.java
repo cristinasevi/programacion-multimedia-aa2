@@ -31,7 +31,7 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         logicManager.actualizar(delta);
-        renderManager.dibujar();
+        renderManager.dibujar(delta);
 
         // Pausa con ESC
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {

@@ -1,6 +1,5 @@
 package programacion.multimedia.aa2.domain;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
@@ -37,4 +36,5 @@ public abstract class Character {
     public Rectangle getLimites() { return limites; }
     public int getVidas() { return vidas; }
     public void setVidas(int vidas) { this.vidas = vidas; }
+    public TextureRegion getFrameActual() { return frameActual; }
 }
