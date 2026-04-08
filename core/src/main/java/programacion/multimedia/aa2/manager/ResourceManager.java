@@ -28,6 +28,7 @@ public class ResourceManager {
     private static void loadSounds() {
         assetManager.load("sounds/bubble-pop.mp3", Sound.class);
         assetManager.load("sounds/explosion.mp3", Sound.class);
+        assetManager.load("sounds/powerup.mp3", Sound.class);
     }
 
     private static void loadMusics() {

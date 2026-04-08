@@ -1,7 +1,5 @@
 package programacion.multimedia.aa2.manager;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.utils.Disposable;
 import programacion.multimedia.aa2.domain.*;
@@ -152,7 +150,7 @@ public class LogicManager implements Disposable {
             }
 
             // Tinta del pez globo vs jugador
-            if (enemigo instanceof PezGloboEnemy) {
+            if (i < enemigos.size() && enemigo instanceof PezGloboEnemy) {
                 List<Burbuja> tinta = ((PezGloboEnemy) enemigo).getTinta();
                 for (int j = tinta.size() - 1; j >= 0; j--) {
                     if (jugador.getLimites().overlaps(tinta.get(j).getLimites())) {
@@ -171,7 +169,7 @@ public class LogicManager implements Disposable {
                 powerups.get(i).aplicar(jugador);
                 powerups.remove(i);
                 if (ConfigurationManager.isSoundEnabled())
-                    ResourceManager.getSound(SOUND_HIT).play();
+                    ResourceManager.getSound(SOUND_POWERUP).play();
             }
         }
     }

@@ -10,6 +10,9 @@ import static programacion.multimedia.aa2.util.Constants.*;
 
 public class Burbuja {
 
+    private static final float ANCHO = 20f;
+    private static final float ALTO  = 20f;
+
     private Vector2 posicion;
     private Rectangle limites;
     private TextureRegion textura;
@@ -19,7 +22,7 @@ public class Burbuja {
         this.vaDerecha = vaDerecha;
         textura = ResourceManager.getRegion(BURBUJA_PROYECTIL);
         posicion = new Vector2(x, y);
-        limites = new Rectangle(x, y, textura.getRegionWidth(), textura.getRegionHeight());
+        limites = new Rectangle(x, y, ANCHO, ALTO);
     }
 
     public void actualizar(float dt) {
@@ -28,7 +31,7 @@ public class Burbuja {
     }
 
     public void dibujar(Batch batch) {
-        batch.draw(textura, posicion.x, posicion.y);
+        batch.draw(textura, posicion.x, posicion.y, ANCHO, ALTO);
     }
 
     public boolean fueraDePantalla() {

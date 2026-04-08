@@ -66,4 +66,5 @@ public class Constants {
     public static final String SOUND_SHOOT = "bubble-pop.mp3";
     public static final String SOUND_HIT = "explosion.mp3";
     public static final String MUSIC_GAME = "ocean-waves.mp3";
+    public static final String SOUND_POWERUP = "powerup.mp3";
 }
